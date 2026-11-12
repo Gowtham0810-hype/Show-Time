@@ -1,0 +1,7 @@
+{
+  "name": "CINEMA — 3D Editorial Discovery & Booking",
+  "description": "Minimal editorial movie discovery and booking platform featuring a 3D diagonal leaning-card gallery, AI conversational booking, and release alerts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
