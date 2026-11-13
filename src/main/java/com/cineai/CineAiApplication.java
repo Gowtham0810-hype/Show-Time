@@ -2,12 +2,14 @@ package com.cineai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
 @SpringBootApplication
+@EnableScheduling 
 public class CineAiApplication {
 
     public static void main(String[] args) {
