@@ -1,6 +1,12 @@
 import { Movie, Theatre, Showtime, Seat, SeatHoldResponse, Booking, ReleaseAlert, User } from '../types';
 
-const API_BASE = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '');
+
+if (!API_BASE_URL) {
+  throw new Error('VITE_API_BASE_URL is not configured');
+}
+
+const API_BASE = `${API_BASE_URL}/api`;
 
 export function getStoredUser(): User | null {
   try {
