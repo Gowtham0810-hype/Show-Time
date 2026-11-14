@@ -53,3 +53,8 @@ logging:
   level:
     root: INFO
     com.cineai: INFO
+    
+# Email feature flag (set EMAIL_ENABLED=true in Railway to turn emails on)
+app:
+  email:
+    enabled: ${EMAIL_ENABLED:false}

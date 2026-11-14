@@ -38,7 +38,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           DO NOT MISS A SHOW EVER
         </h1>
         <p className="text-sm sm:text-base md:text-[17px] text-[#8e8e8e] mt-3.5 max-w-2xl leading-relaxed">
-          Discover whats playing, find your perfect showtime, and book tickets through a simple conversation. Following an upcoming film? We will let you know the moment its showtimes go live.
+        Discover whats playing, find your perfect showtime, and book tickets through a simple conversation. Following an upcoming film? We will let you know the moment its showtimes go live.
         </p>
       </div>
 

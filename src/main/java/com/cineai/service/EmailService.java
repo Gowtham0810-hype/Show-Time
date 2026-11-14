@@ -27,12 +27,20 @@ public class EmailService {
     @Value("${spring.mail.username:noreply@cineai.com}")
     private String fromAddress;
 
+    @Value("${app.email.enabled:false}")
+    private boolean emailEnabled;
+
     public EmailService(JavaMailSender mailSender, UserRepository userRepository) {
         this.mailSender = mailSender;
         this.userRepository = userRepository;
     }
 
     public void sendBookingConfirmation(Long userId, Booking booking, List<Seat> seats) {
+        if (!emailEnabled) {
+            log.debug("[EMAIL] Disabled, skipping booking confirmation for ref={}", booking.getBookingRef());
+            return;
+        }
+
         userRepository.findById(userId).ifPresent(user -> {
             try {
                 String seatNames = seats.stream()
@@ -80,6 +88,10 @@ public class EmailService {
     public void dispatchBookingEmail(String email, String fullName, String bookingRef, String movieTitle,
                                      String theaterName, String showDate, String showTime,
                                      String seatNames, String totalAmount) {
+        if (!emailEnabled) {
+            return;
+        }
+
         log.info("[EMAIL] Attempting to send booking confirmation to={} ref={} via SMTP from={}", email, bookingRef, fromAddress);
         try {
             String text = String.format(
@@ -109,6 +121,11 @@ public class EmailService {
     }
 
     public void sendAlertNotification(MovieAlert alert, List<Showtime> matchingShowtimes) {
+        if (!emailEnabled) {
+            log.debug("[EMAIL] Disabled, skipping alert notification for alert id={}", alert.getId());
+            return;
+        }
+
         String recipientEmail = (alert.getUser() != null) ? alert.getUser().getEmail() : null;
         if (recipientEmail == null) {
             log.warn("[EMAIL] Alert notification skipped — no user email on alert id={}", alert.getId());
@@ -130,6 +147,10 @@ public class EmailService {
 
     @Async("taskExecutor")
     public void sendAlertNotification(String recipientEmail, String movieTitle, String showtimeDetails) {
+        if (!emailEnabled) {
+            return;
+        }
+
         log.info("[EMAIL] Attempting to send alert notification to={} movie='{}'", recipientEmail, movieTitle);
         try {
             String text = String.format(
