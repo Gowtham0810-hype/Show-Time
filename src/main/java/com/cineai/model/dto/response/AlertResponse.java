@@ -128,6 +128,11 @@ public class AlertResponse {
     public void setScreenType(String screenType) { this.screenType = screenType; }
     public AlertStatus getStatus() { return status; }
     public void setStatus(AlertStatus status) { this.status = status; }
+    public String getUiStatus() {
+        if (status == AlertStatus.TRIGGERED) return "TICKETS_OPEN";
+        if (status == AlertStatus.CANCELLED) return "CANCELLED";
+        return "PENDING";
+    }
     public LocalDateTime getNotifiedAt() { return notifiedAt; }
     public void setNotifiedAt(LocalDateTime notifiedAt) { this.notifiedAt = notifiedAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }

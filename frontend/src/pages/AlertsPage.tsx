@@ -329,7 +329,7 @@ export const AlertsPage: React.FC<AlertsPageProps> = ({ user, onSelectMovie }) =
         ) : (
           <div className="space-y-4">
             {activeAlerts.map((alert) => {
-              const isTicketsOpen = alert.status === 'TICKETS_OPEN';
+              const isTicketsOpen = alert.status === 'TICKETS_OPEN' || (alert.status as any) === 'TRIGGERED';
 
               return (
                 <div

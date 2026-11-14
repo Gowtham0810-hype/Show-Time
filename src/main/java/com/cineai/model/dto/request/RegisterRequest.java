@@ -2,6 +2,7 @@ package com.cineai.model.dto.request;
 
 import com.cineai.model.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -20,7 +21,8 @@ public class RegisterRequest {
     @JsonAlias({"name", "fullName"})
     private String fullName;
 
-    private UserRole role;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UserRole role = UserRole.USER;
 
     public RegisterRequest() {}
 

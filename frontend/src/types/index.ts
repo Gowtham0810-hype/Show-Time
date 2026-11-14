@@ -106,7 +106,8 @@ export interface ReleaseAlert {
   language: string;
   releaseDate: string;
   subscribedAt: string;
-  status: 'PENDING' | 'TICKETS_OPEN' | 'CANCELLED';
+  status: 'PENDING' | 'TICKETS_OPEN' | 'CANCELLED' | 'ACTIVE' | 'TRIGGERED';
+  uiStatus?: string;
   userEmail: string;
   notes?: string;
 }

@@ -79,6 +79,8 @@ public class AdminService {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
 
+        boolean wasUpcoming = movie.getStatus() == MovieStatus.UPCOMING;
+
         if (request.getTitle() != null) movie.setTitle(request.getTitle().trim());
         if (request.getDescription() != null) movie.setDescription(request.getDescription());
         if (request.getGenre() != null) movie.setGenre(request.getGenre());
@@ -91,7 +93,14 @@ public class AdminService {
         if (request.getStatus() != null) movie.setStatus(request.getStatus());
 
         Movie updated = movieRepository.save(movie);
-        log.info("Updated movie with id: {}", updated.getId());
+        log.info("Updated movie with id: {} - status: {}", updated.getId(), updated.getStatus());
+
+        // If promoted to NOW_SHOWING, trigger alert matching for any existing showtimes
+        if (wasUpcoming && updated.getStatus() == MovieStatus.NOW_SHOWING) {
+            log.info("Movie '{}' promoted from UPCOMING to NOW_SHOWING. Checking active user alerts...", updated.getTitle());
+            alertMatcherService.matchAlerts();
+        }
+
         return MovieResponse.fromEntity(updated);
     }
 
@@ -198,6 +207,13 @@ public class AdminService {
                     "Showtime already exists at theater '%s' on %s at %s",
                     theater.getName(), request.getShowDate(), request.getShowTime()
             ));
+        }
+
+        // If movie was UPCOMING, automatically promote it to NOW_SHOWING since it now has a published showtime
+        if (movie.getStatus() == MovieStatus.UPCOMING) {
+            movie.setStatus(MovieStatus.NOW_SHOWING);
+            movieRepository.save(movie);
+            log.info("Movie '{}' automatically promoted from UPCOMING to NOW_SHOWING upon publishing showtime", movie.getTitle());
         }
 
         Showtime showtime = Showtime.builder()

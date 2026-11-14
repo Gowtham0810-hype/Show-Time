@@ -1,6 +1,7 @@
 package com.cineai.controller;
 
 import com.cineai.model.dto.request.CreateMovieRequest;
+import com.cineai.model.dto.request.UpdateMovieRequest;
 import com.cineai.model.dto.response.ApiResponse;
 import com.cineai.model.dto.response.MovieResponse;
 import com.cineai.model.dto.response.ShowtimeResponse;
@@ -71,6 +72,15 @@ public class MovieController {
         MovieResponse created = adminService.createMovie(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Movie created successfully", created));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<MovieResponse>> updateMovie(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateMovieRequest request) {
+        MovieResponse updated = adminService.updateMovie(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Movie updated successfully", updated));
     }
 
     @DeleteMapping("/{id}")

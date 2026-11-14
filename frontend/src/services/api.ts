@@ -161,6 +161,13 @@ export const api = {
     });
   },
 
+  updateMovie: async (id: string, movieData: any): Promise<Movie> => {
+    return request<Movie>(`/movies/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(movieData),
+    });
+  },
+
   deleteMovie: async (id: string): Promise<{ message: string; movie?: Movie }> => {
     return request<{ message: string; movie?: Movie }>(`/movies/${id}`, {
       method: 'DELETE',
@@ -265,7 +272,16 @@ export const api = {
   // Alerts
   getAlerts: async (email?: string): Promise<ReleaseAlert[]> => {
     const qs = email ? `?email=${encodeURIComponent(email)}` : '';
-    return request<ReleaseAlert[]>(`/alerts${qs}`);
+    const rawAlerts = await request<any[]>(`/alerts${qs}`);
+    return (rawAlerts || []).map((a) => {
+      const isTriggered = a.status === 'TRIGGERED' || a.uiStatus === 'TICKETS_OPEN' || a.status === 'TICKETS_OPEN';
+      const isCancelled = a.status === 'CANCELLED';
+      return {
+        ...a,
+        id: String(a.id),
+        status: isCancelled ? 'CANCELLED' : isTriggered ? 'TICKETS_OPEN' : 'PENDING',
+      };
+    });
   },
 
   createAlert: async (

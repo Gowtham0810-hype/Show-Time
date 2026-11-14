@@ -287,6 +287,41 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     }
   };
 
+  // Toggle Movie Status (UPCOMING <-> NOW SHOWING)
+  const handleToggleMovieStatus = async (movie: Movie) => {
+    const nextStatus = movie.isNowShowing ? 'UPCOMING' : 'NOW_SHOWING';
+    const actionLabel = movie.isNowShowing
+      ? `revert "${movie.title}" to UPCOMING PREMIERE`
+      : `release "${movie.title}" as NOW SHOWING (activates alerts & public ticket booking)`;
+    if (!window.confirm(`Are you sure you want to ${actionLabel}?`)) {
+      return;
+    }
+    try {
+      await api.updateMovie(movie.id, {
+        status: nextStatus,
+        isNowShowing: !movie.isNowShowing,
+        isUpcoming: movie.isNowShowing,
+      });
+      setFeedback({
+        type: 'success',
+        message: `Movie "${movie.title}" updated to ${nextStatus === 'NOW_SHOWING' ? 'NOW SHOWING (Live in Repertoire)' : 'UPCOMING PREMIERE'}.`,
+      });
+      await loadData();
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: err.message || 'Failed to update movie status.' });
+    }
+  };
+
+  // Quick jump from Movie card to Configure Showtime form
+  const handleQuickAddShowtime = (movie: Movie) => {
+    setActiveSection('showtimes');
+    setNewShowtime((prev) => ({
+      ...prev,
+      movieId: String(movie.id),
+    }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Submit Theatre
   const handleCreateTheatre = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -325,8 +360,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     e.preventDefault();
     setFeedback(null);
     try {
+      const targetMovie = movies.find((m) => String(m.id) === String(newShowtime.movieId));
+      const wasUpcoming = targetMovie?.isUpcoming;
+
       const created = await api.createShowtime(newShowtime);
-      setFeedback({ type: 'success', message: `Showtime successfully published for ${created.date} at ${created.time}.` });
+      setFeedback({
+        type: 'success',
+        message: `Showtime successfully published for ${created.date} at ${created.time}.${
+          wasUpcoming
+            ? ` "${targetMovie?.title}" has been promoted to NOW SHOWING and patron release alerts have been triggered!`
+            : ''
+        }`,
+      });
       await loadData();
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message || 'Failed to create showtime.' });
@@ -853,23 +898,56 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                       </div>
 
                       <div className="flex flex-col items-end gap-2 shrink-0">
-                        <span
-                          className={`label-mono text-[9px] px-2 py-0.5 ${
-                            m.isNowShowing
-                              ? 'bg-black text-white'
-                              : 'bg-black/5 text-[#8e8e8e]'
-                          }`}
-                        >
-                          {m.isNowShowing ? 'NOW SHOWING' : 'UPCOMING'}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`label-mono text-[9px] px-2 py-0.5 font-semibold ${
+                              m.isNowShowing
+                                ? 'bg-black text-white'
+                                : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            }`}
+                          >
+                            {m.isNowShowing ? 'NOW SHOWING' : 'UPCOMING'}
+                          </span>
 
-                        <button
-                          onClick={() => handleDeleteMovie(m)}
-                          title="Delete movie"
-                          className="p-1.5 text-black/30 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors"
-                        >
-                          <Trash2 size={13} />
-                        </button>
+                          <button
+                            onClick={() => handleDeleteMovie(m)}
+                            title="Delete movie"
+                            className="p-1 text-black/30 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+
+                        {/* Status Toggle & Add Showtime Controls */}
+                        <div className="flex items-center gap-1.5 mt-1">
+                          {m.isUpcoming ? (
+                            <button
+                              onClick={() => handleToggleMovieStatus(m)}
+                              title="Release film to NOW SHOWING (triggers active user alerts)"
+                              className="px-2 py-1 text-[10px] font-semibold tracking-wider bg-emerald-700 hover:bg-emerald-800 text-white flex items-center gap-1 transition-colors"
+                            >
+                              <Check size={11} />
+                              RELEASE NOW
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleToggleMovieStatus(m)}
+                              title="Revert status to Upcoming"
+                              className="px-2 py-1 text-[10px] text-[#8e8e8e] hover:text-[#141414] hover:bg-black/5 border border-black/10 transition-colors"
+                            >
+                              MARK UPCOMING
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => handleQuickAddShowtime(m)}
+                            title="Schedule theatrical showtime for this movie"
+                            className="px-2 py-1 text-[10px] font-semibold tracking-wider bg-[#141414] hover:bg-black text-white flex items-center gap-1 transition-colors"
+                          >
+                            <Plus size={11} />
+                            + SHOWTIME
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -1002,10 +1080,31 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                   >
                     {movies.map((m) => (
                       <option key={m.id} value={m.id}>
-                        {m.title} ({m.language})
+                        {m.title} ({m.language}) — [{m.isNowShowing ? 'NOW SHOWING' : 'UPCOMING PREMIERE'}]
                       </option>
                     ))}
                   </select>
+
+                  {/* Informational Banner if Selected Movie is Upcoming */}
+                  {(() => {
+                    const selectedMovie = movies.find((m) => String(m.id) === String(newShowtime.movieId));
+                    if (selectedMovie?.isUpcoming) {
+                      return (
+                        <div className="mt-2.5 p-3 bg-amber-50 border border-amber-300 text-amber-900 text-xs">
+                          <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[11px] text-amber-800 mb-1">
+                            <AlertCircle size={14} className="text-amber-700" />
+                            Upcoming Premiere Selected
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-amber-900/90">
+                            Publishing this theatrical showtime will automatically promote{' '}
+                            <strong className="underline">"{selectedMovie.title}"</strong> to{' '}
+                            <strong>NOW SHOWING</strong> in the public catalogue and immediately trigger all active patron release alerts for this film!
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
 
                 <div>

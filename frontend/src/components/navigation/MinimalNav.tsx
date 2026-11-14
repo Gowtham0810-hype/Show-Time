@@ -21,7 +21,7 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   // Check if any alert has ticket open
-  const hasActiveTicketOpen = alerts.some((a) => a.status === 'TICKETS_OPEN');
+  const hasActiveTicketOpen = alerts.some((a) => a.status === 'TICKETS_OPEN' || (a.status as any) === 'TRIGGERED');
 
   const navLinks = [
     { label: 'MOVIES', path: '/movies', icon: Film },

@@ -128,4 +128,17 @@ class AuthControllerTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").value("Invalid email or password"));
     }
+
+    @Test
+    void shouldPreventPrivilegeEscalationOnRegistration() throws Exception {
+        String email = "hacker_" + System.currentTimeMillis() + "@cineai.com";
+        String rawJson = String.format("{\"email\":\"%s\",\"password\":\"password123\",\"fullName\":\"Hacker\",\"role\":\"ADMIN\"}", email);
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(rawJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.user.role").value("USER"));
+    }
 }

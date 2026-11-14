@@ -35,6 +35,7 @@ public class EmailService {
         this.userRepository = userRepository;
     }
 
+    @Async("taskExecutor")
     public void sendBookingConfirmation(Long userId, Booking booking, List<Seat> seats) {
         if (!emailEnabled) {
             log.debug("[EMAIL] Disabled, skipping booking confirmation for ref={}", booking.getBookingRef());
@@ -120,6 +121,7 @@ public class EmailService {
         }
     }
 
+    @Async("taskExecutor")
     public void sendAlertNotification(MovieAlert alert, List<Showtime> matchingShowtimes) {
         if (!emailEnabled) {
             log.debug("[EMAIL] Disabled, skipping alert notification for alert id={}", alert.getId());

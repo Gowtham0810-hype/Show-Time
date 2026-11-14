@@ -25,6 +25,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        // SECURITY: Never allow public registration to set ADMIN or any elevated role
+        request.setRole(com.cineai.model.enums.UserRole.USER);
         AuthResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("User registered successfully", response));
