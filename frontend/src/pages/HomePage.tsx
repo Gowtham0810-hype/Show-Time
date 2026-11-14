@@ -32,7 +32,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* ── TEXT HERO ─────────────────────────────────────────────────────── */}
       <div className="w-full px-6 sm:px-10 lg:px-14 mb-10 pb-4 text-left">
         <div className="text-[13px] md:text-[14px] font-semibold tracking-[0.16em] uppercase text-[#8e8e8e] mb-2.5">
-          CURATED FILM JOURNEY
+          FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
         </div>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight uppercase leading-none max-w-5xl text-[#141414]">
           DO NOT MISS A SHOW EVER

@@ -55,8 +55,8 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
               }`}
             >
               <div className="flex flex-col items-start leading-none">
-                <span className="text-[14px] font-bold tracking-[0.18em] uppercase">SHOW</span>
-                <span className="text-[14px] tracking-[0.18em] uppercase text-[#8e8e8e] mt-1">TIME</span>
+                <span className="text-[14px] font-bold tracking-[0.18em] uppercase">FILM</span>
+                <span className="text-[14px] tracking-[0.18em] uppercase text-[#8e8e8e] mt-1">CLUB</span>
               </div>
             </Link>
 
