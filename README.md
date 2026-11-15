@@ -6,9 +6,32 @@
 [![Redis](https://img.shields.io/badge/Redis-7-red.svg)](https://redis.io/)
 [![React](https://img.shields.io/badge/React-18%20%7C%20Vite-61dafb.svg)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38b2ac.svg)](https://tailwindcss.com/)
+[![Railway](https://img.shields.io/badge/Deployed%20on-Railway-0B0D0E.svg?logo=railway)](https://filmclub.up.railway.app/)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 A full-stack, enterprise-grade theatrical film discovery and seat booking engine built with **Spring Boot 3.3.5 (Java 21)** and **React 18 (Vite + Tailwind CSS)**. Features a dual-layer concurrency control architecture with **Redis** in-memory soft holds and **PostgreSQL** pessimistic write locking (`SELECT FOR UPDATE`) to prevent race conditions during peak seat reservation bursts.
+
+---
+
+## 🌐 Live Cloud Deployment (Railway)
+
+The entire full-stack ecosystem — consisting of the relational database, in-memory cache, backend REST API, web client, and AI MCP integration — is containerized and deployed on **Railway Cloud**:
+
+- 🎬 **Live Production Website**: [https://filmclub.up.railway.app/](https://filmclub.up.railway.app/)
+- 🎥 **Interactive Video Walkthrough**: [Loom Demo](https://www.loom.com/share/f4417356165c4c79bf1f7cf66f57bfa8)
+
+<div align="center">
+  <img src="assets/railway-production-architecture.png" alt="Railway Production Architecture" width="850"/>
+</div>
+
+### Production Service Topology
+| Service | Technology | Status | Role |
+|---|---|---|---|
+| **FrontEnd** | React 18 / Vite / Tailwind | `Online` | Public web application hosted at [`filmclub.up.railway.app`](https://filmclub.up.railway.app/) |
+| **Backend Service** | Java 21 / Spring Boot 3.3.5 | `Online` | REST API, security filter chain, and transactional booking engine |
+| **Postgres** | PostgreSQL 16 (`postgres-volume`) | `Online` | ACID relational persistence for movies, venues, seats, and bookings |
+| **Redis** | Redis 7 (`redis-volume`) | `Online` | Distributed 5-minute TTL seat holds preventing race conditions |
+| **MCP Server** | Node.js / Express (SSE) | `Online` | Model Context Protocol bridge allowing Claude AI to book tickets |
 
 ---
 
@@ -225,7 +248,8 @@ npm install
 npm run dev
 ```
 - Frontend launches at `http://localhost:3000`.
-- here is a link to frontend demo `https://www.loom.com/share/f4417356165c4c79bf1f7cf66f57bfa8`.
+- 🎥 **Video Demo**: [Interactive Frontend Walkthrough on Loom](https://www.loom.com/share/f4417356165c4c79bf1f7cf66f57bfa8)
+- 🌐 **Live Cloud Deployment**: [https://filmclub.up.railway.app/](https://filmclub.up.railway.app/)
 ---
 
 ## 🔒 Production Hardening Details
