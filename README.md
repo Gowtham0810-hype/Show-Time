@@ -1,4 +1,4 @@
-# FILM CLUB (CINE-AI) — Curated Cinema Discovery & High-Concurrency Ticketing Platform
+# FILM CLUB — Curated Cinema Discovery & High-Concurrency Ticketing Platform
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-21%20LTS-orange.svg)](https://www.oracle.com/java/)
