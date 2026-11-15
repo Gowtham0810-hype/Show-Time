@@ -8,7 +8,7 @@ function sanitizeBaseUrl(url?: string): string {
 
 export const config = {
   baseUrl: sanitizeBaseUrl(),
-  port: parseInt(process.env.PORT || "3000", 10),
+  port: parseInt(process.env.PORT || "8080", 10),
   host: process.env.HOST || "0.0.0.0",
   defaultUserEmail: process.env.CINEAI_USER_EMAIL?.trim(),
   defaultUserPassword: process.env.CINEAI_USER_PASSWORD?.trim(),

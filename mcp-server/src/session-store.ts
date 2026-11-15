@@ -13,17 +13,17 @@ export interface UserSessionData {
 
 class SessionStore {
   private sessions = new Map<string, UserSessionData>();
-  private defaultSession: UserSessionData | null = null;
+  private activeUserSession: UserSessionData | null = null;
 
-  /** Get auth data for a given session, or fall back to default */
+  /** Get auth data for a given session, or fall back to the active user session */
   get(sessionId?: string): UserSessionData | null {
     if (sessionId && this.sessions.has(sessionId)) {
       return this.sessions.get(sessionId)!;
     }
-    return this.defaultSession;
+    return this.activeUserSession;
   }
 
-  /** Set auth data for a specific session */
+  /** Set auth data for a session and persist as active user session */
   set(sessionId: string | undefined, data: { token: string; user: any; lastHoldToken?: string }): void {
     const sessionData: UserSessionData = {
       token: data.token,
@@ -40,22 +40,22 @@ class SessionStore {
     if (sessionId) {
       this.sessions.set(sessionId, sessionData);
     }
-    // Also update default session so single-user mode stays synchronized
-    this.defaultSession = sessionData;
+    // Persist as the active user session across any rotating Claude worker connections!
+    this.activeUserSession = sessionData;
+    console.log(`[AUTH] Session activated for ${sessionData.user.email} (token length: ${sessionData.token.length})`);
   }
 
-  /** Store a temporary seat hold token in session */
+  /** Store a temporary seat hold token */
   setHoldToken(sessionId: string | undefined, holdToken: string, ttlSeconds: number = 300): void {
     const session = this.get(sessionId);
     if (session) {
       session.lastHoldToken = holdToken;
       session.lastHoldExpiresAt = Date.now() + ttlSeconds * 1000;
-    } else if (this.defaultSession) {
-      this.defaultSession.lastHoldToken = holdToken;
-      this.defaultSession.lastHoldExpiresAt = Date.now() + ttlSeconds * 1000;
+    } else if (this.activeUserSession) {
+      this.activeUserSession.lastHoldToken = holdToken;
+      this.activeUserSession.lastHoldExpiresAt = Date.now() + ttlSeconds * 1000;
     } else {
-      // Store ephemeral hold even if unauthenticated
-      this.defaultSession = {
+      this.activeUserSession = {
         token: "",
         user: { id: 0, fullName: "Guest", email: "", role: "USER" },
         lastHoldToken: holdToken,
@@ -65,14 +65,18 @@ class SessionStore {
     }
   }
 
-  /** Clear session on logout */
-  clear(sessionId?: string): void {
+  /** Explicit user logout */
+  logout(sessionId?: string): void {
     if (sessionId) {
       this.sessions.delete(sessionId);
     }
-    if (!sessionId || this.sessions.size === 0) {
-      this.defaultSession = null;
-    }
+    this.activeUserSession = null;
+    console.log(`[AUTH] User session explicitly logged out.`);
+  }
+
+  /** Compatibility clear method */
+  clear(sessionId?: string): void {
+    this.logout(sessionId);
   }
 
   /** Returns Authorization header if logged in */

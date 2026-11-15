@@ -132,7 +132,8 @@ if (isStdio) {
     res.on("close", () => {
       console.log(`[MCP] SSE connection closed for session: ${sessionId}`);
       sseTransports.delete(sessionId);
-      sessionStore.clear(sessionId);
+      // NOTE: Do NOT clear sessionStore auth here. Claude closes and re-opens connections
+      // across rotating worker IPs on every turn. User auth persists until explicit logout!
       mcpServer.close().catch(() => {});
     });
 

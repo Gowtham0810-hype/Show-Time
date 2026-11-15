@@ -134,17 +134,40 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
     },
     async ({ showtimeId }) => {
       try {
-        const seats: any[] = await requestBackend({
+        const mapRes: any = await requestBackend({
           method: "GET",
-          path: `/api/seats/${showtimeId}`,
+          path: `/api/showtimes/${showtimeId}/seats`,
           sessionId,
         });
 
-        if (!Array.isArray(seats) || seats.length === 0) {
+        const rawSeats: any[] = Array.isArray(mapRes) ? mapRes : mapRes?.seats || [];
+        const basePrice = Number(mapRes?.basePrice || 200);
+
+        if (rawSeats.length === 0) {
           return {
             content: [{ type: "text", text: `No seat records found for showtime #${showtimeId}.` }],
           };
         }
+
+        const seats = rawSeats.map((s) => {
+          const category = s.seatCategory || s.seatType || s.category || "REGULAR";
+          const seatNumber = s.label || `${s.seatRow || "A"}${s.seatNumber || s.id}`;
+          const price =
+            s.price ||
+            (category === "VIP"
+              ? Math.round(basePrice * 1.5)
+              : category === "PREMIUM"
+              ? Math.round(basePrice * 1.25)
+              : basePrice);
+          return {
+            id: s.id,
+            seatRow: s.seatRow || (s.label ? s.label.charAt(0) : "A"),
+            seatNumber,
+            category,
+            status: s.status || "AVAILABLE",
+            price,
+          };
+        });
 
         const total = seats.length;
         const available = seats.filter((s) => s.status === "AVAILABLE");
@@ -154,7 +177,7 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
         // Group available seats by category
         const byType: Record<string, any[]> = {};
         for (const s of available) {
-          const type = s.seatType || s.category || "REGULAR";
+          const type = s.category;
           if (!byType[type]) byType[type] = [];
           byType[type].push(s);
         }
@@ -168,14 +191,17 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
           })
           .join("\n\n");
 
+        const movieTitle = mapRes?.movieTitle ? ` for **${mapRes.movieTitle}**` : "";
+        const theaterName = mapRes?.theaterName ? ` at **${mapRes.theaterName}**` : "";
+
         const text =
-          `## 🪑 Seat Availability for Showtime #${showtimeId}\n\n` +
+          `## 🪑 Seat Availability for Showtime #${showtimeId}${movieTitle}${theaterName}\n\n` +
           `- **Total Seats:** ${total}\n` +
           `- **🟢 Available:** ${available.length}\n` +
           `- **🔴 Booked:** ${booked.length}\n` +
           `- **🟡 Held (Pending Checkout):** ${held.length}\n\n` +
           `### Available Categories & Seats:\n${categoryBreakdown}\n\n` +
-          `💡 **Quick Action:** Use \`recommend_seats(showtimeId: ${showtimeId}, count: 2, preference: "BEST_VIEW")\` to pick the optimal seats, or call \`hold_seats(showtimeId: ${showtimeId}, seatIds: [...])\` to reserve them.`;
+          `💡 **Quick Action:** Use \`recommend_seats(showtimeId: ${showtimeId}, count: 2, preference: "BEST_VIEW")\` to pick optimal seats, or call \`hold_seats(showtimeId: ${showtimeId}, seatIds: [...])\` to reserve them.`;
 
         return { content: [{ type: "text", text }] };
       } catch (err: any) {
@@ -201,17 +227,40 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
     },
     async ({ showtimeId, count = 2, preference = "BEST_VIEW" }) => {
       try {
-        const seats: any[] = await requestBackend({
+        const mapRes: any = await requestBackend({
           method: "GET",
-          path: `/api/seats/${showtimeId}`,
+          path: `/api/showtimes/${showtimeId}/seats`,
           sessionId,
         });
 
-        if (!Array.isArray(seats) || seats.length === 0) {
+        const rawSeats: any[] = Array.isArray(mapRes) ? mapRes : mapRes?.seats || [];
+        const basePrice = Number(mapRes?.basePrice || 200);
+
+        if (rawSeats.length === 0) {
           return {
             content: [{ type: "text", text: `No seat records found for showtime #${showtimeId}.` }],
           };
         }
+
+        const seats = rawSeats.map((s) => {
+          const category = s.seatCategory || s.seatType || s.category || "REGULAR";
+          const seatNumber = s.label || `${s.seatRow || "A"}${s.seatNumber || s.id}`;
+          const price =
+            s.price ||
+            (category === "VIP"
+              ? Math.round(basePrice * 1.5)
+              : category === "PREMIUM"
+              ? Math.round(basePrice * 1.25)
+              : basePrice);
+          return {
+            id: s.id,
+            seatRow: s.seatRow || (s.label ? s.label.charAt(0) : "A"),
+            seatNumber,
+            category,
+            status: s.status || "AVAILABLE",
+            price,
+          };
+        });
 
         const available = seats.filter((s) => s.status === "AVAILABLE");
 
@@ -229,7 +278,7 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
         // Group available seats by row
         const rowMap = new Map<string, any[]>();
         for (const seat of available) {
-          const row = seat.rowName || seat.seatRow || (seat.seatNumber ? seat.seatNumber.charAt(0) : "A");
+          const row = seat.seatRow;
           if (!rowMap.has(row)) rowMap.set(row, []);
           rowMap.get(row)!.push(seat);
         }
@@ -250,15 +299,15 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
 
         if (preference === "VIP") {
           candidateRows = candidateRows.filter(([_, list]) =>
-            list.some((s) => (s.seatType || s.category) === "VIP")
+            list.some((s) => s.category === "VIP")
           );
         } else if (preference === "PREMIUM") {
           candidateRows = candidateRows.filter(([_, list]) =>
-            list.some((s) => (s.seatType || s.category) === "PREMIUM")
+            list.some((s) => s.category === "PREMIUM")
           );
         } else if (preference === "BUDGET") {
           candidateRows = candidateRows.filter(([_, list]) =>
-            list.some((s) => (s.seatType || s.category) === "REGULAR")
+            list.some((s) => s.category === "REGULAR")
           );
         }
 
@@ -309,7 +358,7 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
         const seatNames = chosenSeats.map((s) => s.seatNumber).join(", ");
         const seatIds = chosenSeats.map((s) => s.id);
         const totalPrice = chosenSeats.reduce((sum, s) => sum + (s.price || 200), 0);
-        const category = chosenSeats[0]?.seatType || chosenSeats[0]?.category || "STANDARD";
+        const category = chosenSeats[0]?.category || "STANDARD";
 
         const text =
           `### 🎯 Recommended Seats for Showtime #${showtimeId}\n\n` +

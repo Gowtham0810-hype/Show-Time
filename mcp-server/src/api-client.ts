@@ -44,9 +44,17 @@ export async function requestBackend<T = any>(opts: RequestOptions): Promise<T> 
   }
 
   // Build headers
+  const authHeader = sessionStore.getAuthHeader(sessionId);
+  if (authHeader.Authorization) {
+    const user = sessionStore.get(sessionId)?.user?.email || "authenticated user";
+    console.log(`[API] 🔑 Attached Bearer JWT for ${user} to ${method} ${url.pathname}`);
+  } else {
+    console.log(`[API] 🌐 Public call to ${method} ${url.pathname}`);
+  }
+
   const headers: Record<string, string> = {
     Accept: "application/json",
-    ...sessionStore.getAuthHeader(sessionId),
+    ...authHeader,
   };
 
   let payload: string | undefined;
