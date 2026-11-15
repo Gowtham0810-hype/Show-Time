@@ -224,8 +224,8 @@ cd frontend
 npm install
 npm run dev
 ```
-Frontend launches at `http://localhost:3000`.
-
+- Frontend launches at `http://localhost:3000`.
+- here is a link to frontend demo `https://www.loom.com/share/f4417356165c4c79bf1f7cf66f57bfa8`.
 ---
 
 ## 🔒 Production Hardening Details
