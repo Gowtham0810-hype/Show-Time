@@ -22,9 +22,16 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
           };
         }
 
-        const rows = theaters.map(
-          (t) => `| **#${t.id}** | **${t.name}** | ${t.location || "Chennai"} | ${t.totalScreens || t.screens || 1} screens |`
-        );
+        const rows = theaters.map((t) => {
+          const screenCount = Array.isArray(t.screens)
+            ? t.screens.length
+            : typeof t.totalScreens === "number"
+            ? t.totalScreens
+            : 1;
+          const format = t.screenType ? ` (${t.screenType})` : "";
+          const loc = t.location ? `${t.location}, ${t.city || "Chennai"}` : t.city || "Chennai";
+          return `| **#${t.id}** | **${t.name}** | ${loc} | ${screenCount} screen${screenCount > 1 ? "s" : ""}${format} |`;
+        });
 
         const text =
           `### 🏛 Cinema Theaters in Chennai (${theaters.length} Venues)\n\n` +
@@ -150,21 +157,24 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
         }
 
         const seats = rawSeats.map((s) => {
-          const category = s.seatCategory || s.seatType || s.category || "REGULAR";
-          const seatNumber = s.label || `${s.seatRow || "A"}${s.seatNumber || s.id}`;
+          const category = String(s.seatCategory || s.seatType || s.tier || s.category || "REGULAR").toUpperCase();
+          const seatNumber = s.label || `${s.seatRow || s.row || "A"}${s.seatNumber || s.number || s.id}`;
+          const rawStatus = String(s.status || "available").toUpperCase();
+          const status = rawStatus === "BOOKED" ? "BOOKED" : rawStatus.includes("HELD") || rawStatus.includes("LOCK") ? "HELD" : "AVAILABLE";
           const price =
-            s.price ||
-            (category === "VIP"
+            s.price !== undefined
+              ? Number(s.price)
+              : category === "VIP"
               ? Math.round(basePrice * 1.5)
               : category === "PREMIUM"
               ? Math.round(basePrice * 1.25)
-              : basePrice);
+              : basePrice;
           return {
             id: s.id,
-            seatRow: s.seatRow || (s.label ? s.label.charAt(0) : "A"),
+            seatRow: s.seatRow || s.row || (s.label ? s.label.charAt(0) : "A"),
             seatNumber,
             category,
-            status: s.status || "AVAILABLE",
+            status,
             price,
           };
         });
@@ -172,7 +182,7 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
         const total = seats.length;
         const available = seats.filter((s) => s.status === "AVAILABLE");
         const booked = seats.filter((s) => s.status === "BOOKED");
-        const held = seats.filter((s) => s.status === "HELD" || s.status === "LOCKED");
+        const held = seats.filter((s) => s.status === "HELD");
 
         // Group available seats by category
         const byType: Record<string, any[]> = {};
@@ -243,21 +253,24 @@ export function registerShowtimeTools(server: McpServer, sessionId?: string): vo
         }
 
         const seats = rawSeats.map((s) => {
-          const category = s.seatCategory || s.seatType || s.category || "REGULAR";
-          const seatNumber = s.label || `${s.seatRow || "A"}${s.seatNumber || s.id}`;
+          const category = String(s.seatCategory || s.seatType || s.tier || s.category || "REGULAR").toUpperCase();
+          const seatNumber = s.label || `${s.seatRow || s.row || "A"}${s.seatNumber || s.number || s.id}`;
+          const rawStatus = String(s.status || "available").toUpperCase();
+          const status = rawStatus === "BOOKED" ? "BOOKED" : rawStatus.includes("HELD") || rawStatus.includes("LOCK") ? "HELD" : "AVAILABLE";
           const price =
-            s.price ||
-            (category === "VIP"
+            s.price !== undefined
+              ? Number(s.price)
+              : category === "VIP"
               ? Math.round(basePrice * 1.5)
               : category === "PREMIUM"
               ? Math.round(basePrice * 1.25)
-              : basePrice);
+              : basePrice;
           return {
             id: s.id,
-            seatRow: s.seatRow || (s.label ? s.label.charAt(0) : "A"),
+            seatRow: s.seatRow || s.row || (s.label ? s.label.charAt(0) : "A"),
             seatNumber,
             category,
-            status: s.status || "AVAILABLE",
+            status,
             price,
           };
         });

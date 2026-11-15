@@ -37,7 +37,8 @@ export function registerBookingTools(server: McpServer, sessionId?: string): voi
           `- **Hold Token:** \`${holdToken}\`\n` +
           `- **Time to Complete:** 5 minutes (via Redis distributed TTL)\n\n` +
           `👉 **Would you like me to confirm and book these tickets now?**\n` +
-          `Just reply *"Yes, confirm booking"* or call \`confirm_booking(holdToken: "${holdToken}")\`.`;
+          `Just reply *"Yes, confirm booking"* or call \`confirm_booking(holdToken: "${holdToken}")\`.\n\n` +
+          `*Tip: If you change your mind, you can release them immediately with \`release_hold\`.*`;
 
         return { content: [{ type: "text", text }] };
       } catch (err: any) {
@@ -101,10 +102,16 @@ export function registerBookingTools(server: McpServer, sessionId?: string): voi
           delete session.lastHoldExpiresAt;
         }
 
-        const ref = booking.bookingReference || booking.reference || `BK-${booking.id}`;
+        const ref = booking.bookingRef || booking.bookingReference || booking.reference || `BK-${booking.id}`;
         const movie = booking.movieTitle || booking.movie?.title || "Movie";
         const theater = booking.theaterName || booking.theater?.name || "Theater";
-        const seats = Array.isArray(booking.seatNumbers) ? booking.seatNumbers.join(", ") : booking.seats || "Selected Seats";
+        const date = booking.showDate || "Today";
+        const time = booking.showTime || booking.time || booking.startTime || "Scheduled Time";
+        const seats = Array.isArray(booking.seatLabels) && booking.seatLabels.length > 0
+          ? booking.seatLabels.join(", ")
+          : Array.isArray(booking.seatNumbers)
+          ? booking.seatNumbers.join(", ")
+          : booking.seats || "Selected Seats";
         const total = booking.totalAmount !== undefined ? `₹${booking.totalAmount}` : "Confirmed";
 
         const text =
@@ -114,7 +121,7 @@ export function registerBookingTools(server: McpServer, sessionId?: string): voi
           `|---|---|\n` +
           `| **Movie** | **${movie}** |\n` +
           `| **Theater** | ${theater} |\n` +
-          `| **Showtime** | ${booking.showDate || "Today"} at **${booking.startTime || "Scheduled Time"}** |\n` +
+          `| **Showtime** | ${date} at **${time}** |\n` +
           `| **Seats** | **${seats}** |\n` +
           `| **Total Paid** | **${total}** |\n` +
           `| **Status** | 🟢 **${booking.status || "CONFIRMED"}** |\n\n` +
@@ -156,12 +163,16 @@ export function registerBookingTools(server: McpServer, sessionId?: string): voi
         }
 
         const rows = bookings.map((b) => {
-          const ref = b.bookingReference || b.reference || `#${b.id}`;
+          const ref = b.bookingRef || b.bookingReference || b.reference || `#${b.id}`;
           const movie = b.movieTitle || b.movie?.title || "Movie";
           const theater = b.theaterName || b.theater?.name || "Theater";
           const date = b.showDate || "N/A";
-          const time = b.startTime || "N/A";
-          const seats = Array.isArray(b.seatNumbers) ? b.seatNumbers.join(", ") : b.seats || "Seats";
+          const time = b.showTime || b.time || b.startTime || "N/A";
+          const seats = Array.isArray(b.seatLabels) && b.seatLabels.length > 0
+            ? b.seatLabels.join(", ")
+            : Array.isArray(b.seatNumbers)
+            ? b.seatNumbers.join(", ")
+            : b.seats || "Seats";
           const total = b.totalAmount !== undefined ? `₹${b.totalAmount}` : "Paid";
           const status = b.status === "CONFIRMED" ? "🟢 CONFIRMED" : b.status === "CANCELLED" ? "🔴 CANCELLED" : b.status;
 
@@ -200,24 +211,37 @@ export function registerBookingTools(server: McpServer, sessionId?: string): voi
           sessionId,
         });
 
+        const ref = b.bookingRef || b.bookingReference || reference.trim();
         const movie = b.movieTitle || b.movie?.title || "Movie";
         const theater = b.theaterName || b.theater?.name || "Theater";
-        const seats = Array.isArray(b.seatNumbers) ? b.seatNumbers.join(", ") : b.seats || "Seats";
+        const screen = b.screenType || b.screenName || b.format || "Standard Screen";
+        const date = b.showDate || "Scheduled Date";
+        const time = b.showTime || b.time || b.startTime || "Scheduled Time";
+        const seats = Array.isArray(b.seatLabels) && b.seatLabels.length > 0
+          ? b.seatLabels.join(", ")
+          : Array.isArray(b.seatNumbers)
+          ? b.seatNumbers.join(", ")
+          : b.seats || "Selected Seats";
         const total = b.totalAmount !== undefined ? `₹${b.totalAmount}` : "Paid";
         const status = b.status === "CONFIRMED" ? "🟢 CONFIRMED" : b.status === "CANCELLED" ? "🔴 CANCELLED" : b.status;
+        const bookedOn = b.bookedAt
+          ? new Date(b.bookedAt).toLocaleString()
+          : b.createdAt
+          ? new Date(b.createdAt).toLocaleString()
+          : "Recently";
 
         const text =
-          `## 🎟 Ticket Voucher: ${reference}\n\n` +
+          `## 🎟 Ticket Voucher: ${ref}\n\n` +
           `- **Status:** ${status}\n` +
           `- **Movie:** **${movie}**\n` +
           `- **Theater:** ${theater}\n` +
-          `- **Screen:** ${b.screenName || b.format || "Standard Screen"}\n` +
-          `- **Show Date & Time:** ${b.showDate || "Date"} at **${b.startTime || "Time"}**\n` +
+          `- **Screen:** ${screen}\n` +
+          `- **Show Date & Time:** ${date} at **${time}**\n` +
           `- **Seats Allocated:** **${seats}**\n` +
           `- **Total Amount:** ${total}\n` +
-          `- **Booked On:** ${b.createdAt ? new Date(b.createdAt).toLocaleString() : "Recently"}\n\n` +
+          `- **Booked On:** ${bookedOn}\n\n` +
           (b.status === "CONFIRMED"
-            ? `💡 *Need to cancel? You can call \`cancel_booking(reference: "${reference}")\`.*`
+            ? `💡 *Need to cancel? You can call \`cancel_booking(reference: "${ref}")\`.*`
             : "");
 
         return { content: [{ type: "text", text }] };
@@ -258,6 +282,53 @@ export function registerBookingTools(server: McpServer, sessionId?: string): voi
         return {
           isError: true,
           content: [{ type: "text", text: `❌ Could not cancel booking ${reference}: ${err.message}` }],
+        };
+      }
+    }
+  );
+
+  // 6. release_hold
+  server.tool(
+    "release_hold",
+    "Release an active 5-minute seat hold early, unfreezing the held seats so they become available again.",
+    {
+      holdToken: z.string().optional().describe("Hold token to release (if omitted, releases this session's active seat hold)"),
+    },
+    async ({ holdToken }) => {
+      try {
+        const session = sessionStore.get(sessionId);
+        const tokenToRelease = holdToken || session?.lastHoldToken;
+
+        if (!tokenToRelease) {
+          return {
+            content: [{ type: "text", text: "No active seat hold found in this session to release." }],
+          };
+        }
+
+        await requestBackend({
+          method: "DELETE",
+          path: `/api/holds/${encodeURIComponent(tokenToRelease.trim())}`,
+          sessionId,
+          requiresAuth: true,
+        });
+
+        if (session) {
+          delete session.lastHoldToken;
+          delete session.lastHoldExpiresAt;
+        }
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Seat Hold Released**: Hold \`${tokenToRelease}\` has been cancelled early. The seats are immediately available again.`,
+            },
+          ],
+        };
+      } catch (err: any) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: `❌ Could not release hold: ${err.message}` }],
         };
       }
     }
