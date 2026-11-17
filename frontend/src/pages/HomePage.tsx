@@ -29,17 +29,32 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="pt-28 pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
 
-      {/* ── TEXT HERO ─────────────────────────────────────────────────────── */}
-      <div className="w-full px-6 sm:px-10 lg:px-14 mb-10 pb-4 text-left">
-        <div className="text-[13px] md:text-[14px] font-semibold tracking-[0.16em] uppercase text-[#8e8e8e] mb-2.5">
-          FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
+      {/* ── CINEMATIC HERO BANNER ─────────────────────────────────────────── */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 mb-12">
+        <div className="relative w-full rounded-2xl overflow-hidden bg-black text-white shadow-2xl min-h-[380px] sm:min-h-[440px] md:min-h-[500px] flex items-end border border-black/10">
+          {/* Background Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center md:bg-[center_top_35%] scale-100 hover:scale-[1.02] transition-transform duration-1000 ease-out opacity-70"
+            style={{ backgroundImage: `url('/fightclub-hero.jpg')` }}
+          />
+          {/* Multi-layer Cinematic Vignette & Gradients */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/25" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+
+          {/* Hero Content */}
+          <div className="relative z-10 p-6 sm:p-10 md:p-14 max-w-3xl text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] sm:text-[12px] font-semibold tracking-[0.2em] uppercase text-neutral-300 mb-3 sm:mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
+            </div>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight uppercase leading-[0.95] text-white drop-shadow-md">
+              DO NOT MISS A SHOW EVER
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-neutral-300 mt-3 sm:mt-4 max-w-2xl font-normal leading-relaxed drop-shadow">
+              Discover what's playing, explore theatrical showtimes, and reserve your seats with sub-second concurrency. Never miss an upcoming premiere with instant release alerts.
+            </p>
+          </div>
         </div>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight uppercase leading-none max-w-5xl text-[#141414]">
-          DO NOT MISS A SHOW EVER
-        </h1>
-        <p className="text-sm sm:text-base md:text-[17px] text-[#8e8e8e] mt-3.5 max-w-2xl leading-relaxed">
-        Discover whats playing, find your perfect showtime, and book tickets through a simple conversation. Following an upcoming film? We will let you know the moment its showtimes go live.
-        </p>
       </div>
 
       {/* Section 1: ALL REPERTOIRE */}

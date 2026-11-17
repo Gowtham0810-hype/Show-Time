@@ -78,7 +78,7 @@ export async function requestBackend<T = any>(opts: RequestOptions): Promise<T> 
 
     const contentType = response.headers.get("content-type") || "";
     const isJson = contentType.includes("application/json");
-
+    
     let responseData: any;
     if (isJson) {
       responseData = await response.json();
@@ -153,3 +153,4 @@ export async function initializeDefaultAuth(): Promise<void> {
     }
   }
 }
+

@@ -41,11 +41,12 @@ public class SeatHoldService {
             Boolean success = redisTemplate.opsForValue()
                     .setIfAbsent(key, userId.toString(), Duration.ofMinutes(holdTtlMinutes));
 
-            if (Boolean.FALSE.equals(success)) {
-                // If it was already held by THIS user, refresh TTL
+            if (!success) {
+                // If it was already held by THIS user, allow continuation without resetting TTL
+                // FAIRNESS POLICY: Do NOT call redisTemplate.expire() to prevent infinite seat squatting.
+                // The hold strictly expires holdTtlMinutes after the initial reservation.
                 String currentHolder = redisTemplate.opsForValue().get(key);
                 if (userId.toString().equals(currentHolder)) {
-                    redisTemplate.expire(key, Duration.ofMinutes(holdTtlMinutes));
                     heldInThisBatch.add(seatId);
                     continue;
                 }
