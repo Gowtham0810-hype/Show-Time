@@ -27,33 +27,31 @@ export const HomePage: React.FC<HomePageProps> = ({
   );
 
   return (
-    <div className="pt-28 pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
+    <div className="pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
 
-      {/* ── CINEMATIC HERO BANNER ─────────────────────────────────────────── */}
-      <div className="w-full px-4 sm:px-8 lg:px-12 mb-12">
-        <div className="relative w-full rounded-2xl overflow-hidden bg-black text-white shadow-2xl min-h-[380px] sm:min-h-[440px] md:min-h-[500px] flex items-end border border-black/10">
-          {/* Background Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center md:bg-[center_top_35%] scale-100 hover:scale-[1.02] transition-transform duration-1000 ease-out opacity-70"
-            style={{ backgroundImage: `url('/fightclub-hero.jpg')` }}
-          />
-          {/* Multi-layer Cinematic Vignette & Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/25" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+      {/* ── CINEMATIC HERO BANNER (Full-Bleed Edge-to-Edge Upper Section) ──── */}
+      <div className="relative w-full aspect-[1024/426] min-h-[460px] sm:min-h-[520px] md:min-h-[580px] lg:min-h-[640px] max-h-[85vh] bg-black flex flex-col justify-end overflow-hidden mb-6">
+        {/* Full-width Background Image (100% visible, no heavy darkening) */}
+        <div
+          className="absolute inset-0 bg-cover bg-center md:bg-[center_top_20%] bg-no-repeat"
+          style={{ backgroundImage: `url('/fightclub-hero.jpg')` }}
+        />
 
-          {/* Hero Content */}
-          <div className="relative z-10 p-6 sm:p-10 md:p-14 max-w-3xl text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[11px] sm:text-[12px] font-semibold tracking-[0.2em] uppercase text-neutral-300 mb-3 sm:mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
-            </div>
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight uppercase leading-[0.95] text-white drop-shadow-md">
-              DO NOT MISS A SHOW EVER
-            </h1>
-            <p className="text-sm sm:text-base md:text-lg text-neutral-300 mt-3 sm:mt-4 max-w-2xl font-normal leading-relaxed drop-shadow">
-              Discover what's playing, explore theatrical showtimes, and reserve your seats with sub-second concurrency. Never miss an upcoming premiere with instant release alerts.
-            </p>
+        {/* Soft Bottom Gradient Fade into Catalogue */}
+        <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 bg-gradient-to-t from-[#fafafa] via-[#fafafa]/30 to-transparent pointer-events-none" />
+
+        {/* Hero Content Overlay */}
+        <div className="relative z-10 px-6 sm:px-12 md:px-16 pb-8 sm:pb-12 max-w-4xl text-left pointer-events-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[11px] sm:text-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.6)] mb-3 sm:mb-4 border border-white">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
           </div>
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight uppercase leading-[0.95] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+            DO NOT MISS A SHOW EVER
+          </h1>
+          <p className="text-sm sm:text-base md:text-lg text-white/95 mt-3 sm:mt-4 max-w-2xl font-medium leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
+            Discover curated repertoire cinema, explore theatrical showtimes, and reserve your seats with sub-second concurrency. Instant release alerts ensure you never miss a premiere.
+          </p>
         </div>
       </div>
 
