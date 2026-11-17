@@ -27,28 +27,23 @@ export const HomePage: React.FC<HomePageProps> = ({
   );
 
   return (
-    <div className="pt-24 md:pt-[94px] pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
+    <div className="pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
 
-      {/* ── CINEMATIC HERO BANNER (Positioned below navigation, screen-fitted) ── */}
-      <div className="relative w-full h-[340px] sm:h-[400px] md:h-[450px] lg:h-[480px] bg-black flex flex-col justify-end overflow-hidden mb-8 border-b border-black/10">
-        {/* Full-width Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center md:bg-[center_35%] bg-no-repeat"
-          style={{ backgroundImage: `url('/fightclub-hero.jpg')` }}
+      {/* ── CINEMATIC HERO BANNER (Full Uncropped Image) ──────────────────── */}
+      <div className="relative w-full bg-black mb-8 select-none">
+        {/* Full Uncropped Image: 100% of the photograph rendered with zero cropping */}
+        <img
+          src="/fightclub-hero.jpg"
+          alt="Film Club Cinema"
+          className="w-full h-auto block"
         />
 
-        {/* Hero Content Overlay */}
-        <div className="relative z-10 px-6 sm:px-10 md:px-14 pb-6 sm:pb-8 max-w-3xl text-left pointer-events-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[10px] sm:text-[11px] shadow-[0_4px_16px_rgba(0,0,0,0.6)] mb-2.5 sm:mb-3 border border-white">
+        {/* Minimal High-Contrast Badge at bottom-left */}
+        <div className="absolute bottom-4 left-5 sm:bottom-6 sm:left-8 z-10 pointer-events-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[10px] sm:text-[11px] shadow-[0_6px_20px_rgba(0,0,0,0.6)] border border-white">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
           </div>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase leading-[0.95] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
-            DO NOT MISS A SHOW EVER
-          </h1>
-          <p className="text-xs sm:text-sm md:text-base text-white/95 mt-2 sm:mt-2.5 max-w-2xl font-medium leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
-            Discover curated repertoire cinema, explore theatrical showtimes, and reserve your seats with sub-second concurrency. Instant release alerts ensure you never miss a premiere.
-          </p>
         </div>
       </div>
 
