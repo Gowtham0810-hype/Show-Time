@@ -37,9 +37,6 @@ export const HomePage: React.FC<HomePageProps> = ({
           style={{ backgroundImage: `url('/fightclub-hero.jpg')` }}
         />
 
-        {/* Soft Bottom Gradient Fade into Catalogue */}
-        <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 bg-gradient-to-t from-[#fafafa] via-[#fafafa]/30 to-transparent pointer-events-none" />
-
         {/* Hero Content Overlay */}
         <div className="relative z-10 px-6 sm:px-12 md:px-16 pb-8 sm:pb-12 max-w-4xl text-left pointer-events-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[11px] sm:text-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.6)] mb-3 sm:mb-4 border border-white">
