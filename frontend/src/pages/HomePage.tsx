@@ -27,24 +27,19 @@ export const HomePage: React.FC<HomePageProps> = ({
   );
 
   return (
-    <div className="pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
+    <div className="pt-28 pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
 
-      {/* ── CINEMATIC HERO BANNER (Full Uncropped Image) ──────────────────── */}
-      <div className="relative w-full bg-black mb-8 select-none">
-        {/* Full Uncropped Image: 100% of the photograph rendered with zero cropping */}
-        <img
-          src="/fightclub-hero.jpg"
-          alt="Film Club Cinema"
-          className="w-full h-auto block"
-        />
-
-        {/* Minimal High-Contrast Badge at bottom-left */}
-        <div className="absolute bottom-4 left-5 sm:bottom-6 sm:left-8 z-10 pointer-events-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[10px] sm:text-[11px] shadow-[0_6px_20px_rgba(0,0,0,0.6)] border border-white">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
-          </div>
+      {/* ── TEXT HERO ─────────────────────────────────────────────────────── */}
+      <div className="w-full px-6 sm:px-10 lg:px-14 mb-10 pb-4 text-left">
+        <div className="text-[13px] md:text-[14px] font-semibold tracking-[0.16em] uppercase text-[#8e8e8e] mb-2.5">
+          FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
         </div>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight uppercase leading-none max-w-5xl text-[#141414]">
+          DO NOT MISS A SHOW EVER
+        </h1>
+        <p className="text-sm sm:text-base md:text-[17px] text-[#8e8e8e] mt-3.5 max-w-2xl leading-relaxed">
+        Discover whats playing, find your perfect showtime, and book tickets through a simple conversation. Following an upcoming film? We will let you know the moment its showtimes go live.
+        </p>
       </div>
 
       {/* Section 1: ALL REPERTOIRE */}

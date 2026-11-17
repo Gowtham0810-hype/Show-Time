@@ -45,14 +45,18 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
         {/* Top-Left OPAQUE Four-Tile Navigation (scaled +15%) */}
         <div className="flex flex-col items-start gap-2 pointer-events-auto">
           <div className="flex items-center gap-2">
-            {/* Main Brand Tile: 60px / 66px height */}
+            {/* Main Brand Tile: 66px height */}
             <Link
               to="/"
-              className="h-[60px] md:h-[66px] px-6 flex items-center justify-center bg-white border border-neutral-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.7)] hover:bg-neutral-50 transition-all duration-300"
+              className={`h-[60px] md:h-[66px] px-6 flex items-center justify-center border transition-all duration-300 ${
+                location.pathname === '/'
+                  ? 'bg-[#141414] text-white border-[#141414]'
+                  : 'bg-[#fafafa]/90 backdrop-blur-[14px] text-[#141414] border-black/[0.08] hover:bg-[#f2f2f1]'
+              }`}
             >
               <div className="flex flex-col items-start leading-none">
-                <span className="text-[14px] font-black tracking-[0.2em] uppercase text-black">FILM</span>
-                <span className="text-[13px] font-extrabold tracking-[0.2em] uppercase text-neutral-500 mt-1">CLUB</span>
+                <span className="text-[14px] font-bold tracking-[0.18em] uppercase">FILM</span>
+                <span className="text-[14px] tracking-[0.18em] uppercase text-[#8e8e8e] mt-1">CLUB</span>
               </div>
             </Link>
 
@@ -64,15 +68,15 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`h-[60px] md:h-[66px] px-5 flex items-center gap-2.5 border transition-all duration-300 relative shadow-[0_10px_30px_rgba(0,0,0,0.45)] ${
+                    className={`h-[60px] md:h-[66px] px-5 flex items-center gap-2.5 border transition-all duration-300 relative ${
                       isActive
-                        ? 'bg-[#141414] text-white border-black font-bold ring-2 ring-white/90'
-                        : 'bg-white/95 backdrop-blur-md text-[#141414] border-neutral-200/90 font-bold hover:bg-white hover:text-black hover:shadow-[0_12px_36px_rgba(0,0,0,0.65)] hover:scale-[1.02]'
+                        ? 'bg-black/[0.07] text-[#141414] border-black/20 font-semibold'
+                        : 'bg-[#fafafa]/90 backdrop-blur-[14px] text-[#141414]/80 border-black/[0.08] hover:text-[#141414] hover:bg-white hover:border-black/15'
                     }`}
                   >
                     <span className="label-xs text-[12.5px] tracking-[0.08em]">{item.label}</span>
                     {item.badge && (
-                      <span className="px-2 py-0.5 text-[11px] font-black bg-amber-400 text-black leading-none rounded-xs shadow-md">
+                      <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-[#141414] text-white leading-none">
                         {item.badge}
                       </span>
                     )}
@@ -84,10 +88,10 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
             {/* Mobile Menu Trigger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden h-[60px] px-5 flex items-center justify-center bg-white border border-neutral-200/90 text-[#141414] shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:bg-neutral-50 pointer-events-auto"
+              className="lg:hidden h-[60px] px-5 flex items-center justify-center bg-[#fafafa]/90 backdrop-blur-[14px] border border-black/[0.08] text-[#141414] pointer-events-auto"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X size={20} className="stroke-[2.5]" /> : <Menu size={20} className="stroke-[2.5]" />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -97,18 +101,18 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
           {user ? (
             <div className="relative">
               <div
-                className="h-[60px] md:h-[66px] px-5 flex items-center gap-3 bg-white border border-neutral-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.5)] cursor-pointer hover:bg-neutral-50 hover:shadow-[0_12px_36px_rgba(0,0,0,0.7)] transition-all duration-300"
+                className="h-[60px] md:h-[66px] px-4 flex items-center gap-3 bg-[#fafafa]/90 backdrop-blur-[14px] border border-black/[0.08] cursor-pointer hover:bg-white transition-all"
                 onClick={() => setShowSignOutConfirm(true)}
                 title="Click to sign out"
               >
-                <div className="w-7 h-7 rounded-full bg-[#141414] text-white flex items-center justify-center text-[12px] font-black shadow-sm">
+                <div className="w-6 h-6 rounded-full bg-[#141414] text-white flex items-center justify-center text-[11px] font-semibold">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="hidden sm:flex flex-col text-left">
-                  <span className="text-[13px] font-extrabold leading-none text-black">
+                  <span className="text-[13px] font-medium leading-none text-[#141414]">
                     {user.name}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold mt-0.5">
+                  <span className="text-[10px] uppercase tracking-wider text-[#8e8e8e] mt-0.5">
                     {user.role === 'ADMIN' ? 'Admin' : 'Member'}
                   </span>
                 </div>
@@ -152,10 +156,10 @@ export const MinimalNav: React.FC<MinimalNavProps> = ({
           ) : (
             <button
               onClick={onOpenAuthModal}
-              className="h-[60px] md:h-[66px] px-6 flex items-center gap-2.5 bg-white border border-neutral-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-[#141414] hover:bg-neutral-50 hover:shadow-[0_12px_36px_rgba(0,0,0,0.7)] hover:scale-[1.02] font-black tracking-wider transition-all duration-300"
+              className="h-[60px] md:h-[66px] px-5 flex items-center gap-2.5 bg-[#fafafa]/90 backdrop-blur-[14px] border border-black/[0.08] text-[#141414] hover:bg-white transition-all"
             >
-              <UserIcon size={16} className="text-black stroke-[2.5]" />
-              <span className="label-xs text-[13px] font-black tracking-wider text-black">SIGN IN</span>
+              <UserIcon size={16} className="text-[#8e8e8e]" />
+              <span className="label-xs text-[12.5px]">SIGN IN</span>
             </button>
           )}
         </div>
