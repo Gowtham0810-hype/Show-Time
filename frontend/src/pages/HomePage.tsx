@@ -27,26 +27,26 @@ export const HomePage: React.FC<HomePageProps> = ({
   );
 
   return (
-    <div className="pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
+    <div className="pt-24 md:pt-[94px] pb-32 min-h-screen bg-[#fafafa] text-[#141414] overflow-x-hidden">
 
-      {/* ── CINEMATIC HERO BANNER (Full-Bleed Edge-to-Edge Upper Section) ──── */}
-      <div className="relative w-full aspect-[1024/426] min-h-[460px] sm:min-h-[520px] md:min-h-[580px] lg:min-h-[640px] max-h-[85vh] bg-black flex flex-col justify-end overflow-hidden mb-6">
-        {/* Full-width Background Image (100% visible, no heavy darkening) */}
+      {/* ── CINEMATIC HERO BANNER (Positioned below navigation, screen-fitted) ── */}
+      <div className="relative w-full h-[340px] sm:h-[400px] md:h-[450px] lg:h-[480px] bg-black flex flex-col justify-end overflow-hidden mb-8 border-b border-black/10">
+        {/* Full-width Background Image */}
         <div
-          className="absolute inset-0 bg-cover bg-center md:bg-[center_top_20%] bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center md:bg-[center_35%] bg-no-repeat"
           style={{ backgroundImage: `url('/fightclub-hero.jpg')` }}
         />
 
         {/* Hero Content Overlay */}
-        <div className="relative z-10 px-6 sm:px-12 md:px-16 pb-8 sm:pb-12 max-w-4xl text-left pointer-events-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[11px] sm:text-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.6)] mb-3 sm:mb-4 border border-white">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+        <div className="relative z-10 px-6 sm:px-10 md:px-14 pb-6 sm:pb-8 max-w-3xl text-left pointer-events-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white text-black font-extrabold tracking-[0.2em] uppercase text-[10px] sm:text-[11px] shadow-[0_4px_16px_rgba(0,0,0,0.6)] mb-2.5 sm:mb-3 border border-white">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             FIRST RULE OF FILM CLUB: TALK ABOUT FILM CLUB
           </div>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight uppercase leading-[0.95] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase leading-[0.95] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
             DO NOT MISS A SHOW EVER
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-white/95 mt-3 sm:mt-4 max-w-2xl font-medium leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
+          <p className="text-xs sm:text-sm md:text-base text-white/95 mt-2 sm:mt-2.5 max-w-2xl font-medium leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
             Discover curated repertoire cinema, explore theatrical showtimes, and reserve your seats with sub-second concurrency. Instant release alerts ensure you never miss a premiere.
           </p>
         </div>
